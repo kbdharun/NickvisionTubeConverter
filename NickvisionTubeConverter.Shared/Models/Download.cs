@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 namespace NickvisionTubeConverter.Shared.Models;
 
 /// <summary>
-/// Qualities for a Download
+/// Audio qualities for a Download
 /// </summary>
-public enum Quality
+public enum AudioQuality
 {
     Best = 0,
-    Good,
     Worst
 }
 
@@ -45,7 +44,7 @@ public class Download
 {
     private readonly Guid _id;
     private readonly MediaFileType _fileType;
-    private readonly Quality _quality;
+    private readonly AudioQuality _audioQuality;
     private readonly Subtitle _subtitle;
     private readonly bool _overwriteFiles;
     private readonly string _logPath;
@@ -78,13 +77,13 @@ public class Download
     /// <param name="saveFolder">The folder to save the download to</param>
     /// <param name="saveFilename">The filename to save the download as</param>
     /// <param name="overwriteFiles">Whether or not to overwrite existing files</param>
-    /// <param name="quality">The quality of the download</param>
+    /// <param name="audioQuality">The audio quality of the download</param>
     /// <param name="subtitle">The subtitles for the download</param>
-    public Download(string videoUrl, MediaFileType fileType, string saveFolder, string saveFilename, bool overwriteFiles, Quality quality = Quality.Best, Subtitle subtitle = Subtitle.None)
+    public Download(string videoUrl, MediaFileType fileType, string saveFolder, string saveFilename, bool overwriteFiles, AudioQuality audioQuality = AudioQuality.Best, Subtitle subtitle = Subtitle.None)
     {
         _id = Guid.NewGuid();
         _fileType = fileType;
-        _quality = quality;
+        _audioQuality = audioQuality;
         _subtitle = subtitle;
         _overwriteFiles = overwriteFiles;
         _tempDownloadPath = $"{Configuration.TempDir}{Path.DirectorySeparatorChar}{_id}{Path.DirectorySeparatorChar}";
@@ -142,26 +141,24 @@ public class Download
                 var postProcessors = new List<Dictionary<string, dynamic>>();
                 if (_fileType.GetIsAudio())
                 {
-                    ytOpt.Add("format", _quality != Quality.Worst ? "ba/b" : "wa/w");
+                    ytOpt.Add("format", _audioQuality != AudioQuality.Worst ? "ba/b" : "wa/w");
                     postProcessors.Add(new Dictionary<string, dynamic>() { { "key", "FFmpegExtractAudio" }, { "preferredcodec", _fileType.ToString().ToLower() } });
                 }
                 else if (_fileType.GetIsVideo())
                 {
                     if (_fileType == MediaFileType.MP4)
                     {
-                        ytOpt.Add("format", _quality switch
+                        ytOpt.Add("format", _audioQuality switch
                         {
-                            Quality.Best => "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b",
-                            Quality.Good => "bv*[ext=mp4][height<=720]+ba[ext=m4a]/b[ext=mp4][height<=720] / bv*[height<=720]+ba/b[height<=720]",
+                            AudioQuality.Best => "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b",
                             _ => "wv[ext=mp4]*+wa[ext=m4a]/w[ext=mp4] / wv*+wa/w"
                         });
                     }
                     else
                     {
-                        ytOpt.Add("format", _quality switch
+                        ytOpt.Add("format", _audioQuality switch
                         {
-                            Quality.Best => "bv*+ba/b",
-                            Quality.Good => "bv*[height<=720]+ba/b[height<=720]",
+                            AudioQuality.Best => "bv*+ba/b",
                             _ => "wv*+wa/w"
                         });
                     }

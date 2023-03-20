@@ -60,7 +60,7 @@ public partial class AddDownloadDialog : Adw.MessageDialog
     [Gtk.Connect] private readonly Gtk.Button _backButton;
     [Gtk.Connect] private readonly Gtk.Label _titleLabel;
     [Gtk.Connect] private readonly Adw.ComboRow _fileTypeRow;
-    [Gtk.Connect] private readonly Adw.ComboRow _qualityRow;
+    [Gtk.Connect] private readonly Adw.ComboRow _audioQualityRow;
     [Gtk.Connect] private readonly Adw.ComboRow _subtitleRow;
     [Gtk.Connect] private readonly Adw.EntryRow _saveFolderRow;
     [Gtk.Connect] private readonly Gtk.MenuButton _saveWarning;
@@ -137,7 +137,7 @@ public partial class AddDownloadDialog : Adw.MessageDialog
         _controller.Accepted = e.Response == "ok";
         if (_controller.Accepted)
         {
-            _controller.PopulateDownloads(_videoUrlInfo!, (MediaFileType)_fileTypeRow.GetSelected(), (Quality)_qualityRow.GetSelected(), (Subtitle)_subtitleRow.GetSelected(), _saveFolderRow.GetText(), _overwriteSwitch.GetActive());
+            _controller.PopulateDownloads(_videoUrlInfo!, (MediaFileType)_fileTypeRow.GetSelected(), (AudioQuality)_audioQualityRow.GetSelected(), (Subtitle)_subtitleRow.GetSelected(), _saveFolderRow.GetText(), _overwriteSwitch.GetActive());
         }
     }
 
