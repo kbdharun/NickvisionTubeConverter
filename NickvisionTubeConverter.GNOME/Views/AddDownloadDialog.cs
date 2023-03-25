@@ -130,20 +130,6 @@ public partial class AddDownloadDialog : Adw.Window
     }
 
     /// <summary>
-    /// Occurs when the dialog is closed
-    /// </summary>
-    /// <param name="sender">Adw.MessageDialog</param>
-    /// <param name="e">ResponseSignalArgs</param>
-    private void Response(Adw.MessageDialog sender, ResponseSignalArgs e)
-    {
-        _controller.Accepted = e.Response == "ok";
-        if (_controller.Accepted)
-        {
-            _controller.PopulateDownloads(_videoUrlInfo!, (MediaFileType)_fileTypeRow.GetSelected(), (AudioQuality)_audioQualityRow.GetSelected(), (Subtitle)_subtitleRow.GetSelected(), _saveFolderRow.GetText(), _overwriteSwitch.GetActive());
-        }
-    }
-
-    /// <summary>
     /// Occurs when the video url is changed
     /// </summary>
     /// <param name="sender">Adw.EntryRow</param>
