@@ -100,7 +100,7 @@ public partial class MainWindow : Adw.ApplicationWindow
     public async Task StartAsync()
     {
         _application.AddWindow(this);
-        Show();
+        Present();
         _spinnerContainer.SetVisible(true);
         _mainBox.SetVisible(false);
         _spinner.Start();
@@ -232,17 +232,14 @@ public partial class MainWindow : Adw.ApplicationWindow
     {
         var addController = _controller.CreateAddDownloadDialogController();
         var addDialog = new AddDownloadDialog(addController, this);
-        addDialog.Show();
-        addDialog.OnResponse += (sender, e) =>
+        addDialog.Present();
+        addDialog.OnDownload += (sender, e) =>
         {
-            if (addController.Accepted)
+            foreach (var download in addController.Downloads)
             {
-                foreach (var download in addController.Downloads)
-                {
-                    _controller.AddDownload(download);
-                }
+                _controller.AddDownload(download);
             }
-            addDialog.Destroy();
+            addDialog.Close();
         };
     }
 
@@ -254,7 +251,7 @@ public partial class MainWindow : Adw.ApplicationWindow
     private void Preferences(Gio.SimpleAction sender, EventArgs e)
     {
         var preferencesDialog = new PreferencesDialog(_controller.PreferencesViewController, _application, this);
-        preferencesDialog.Show();
+        preferencesDialog.Present();
     }
 
     /// <summary>
@@ -268,7 +265,7 @@ public partial class MainWindow : Adw.ApplicationWindow
         var shortcutsWindow = (Gtk.ShortcutsWindow)builder.GetObject("_shortcuts");
         shortcutsWindow.SetTransientFor(this);
         shortcutsWindow.SetIconName(_controller.AppInfo.ID);
-        shortcutsWindow.Show();
+        shortcutsWindow.Present();
     }
 
     /// <summary>
@@ -309,6 +306,6 @@ public partial class MainWindow : Adw.ApplicationWindow
         dialog.SetArtists(_controller.Localizer["Artists", "Credits"].Split(Environment.NewLine));
         dialog.SetTranslatorCredits((string.IsNullOrEmpty(_controller.Localizer["Translators", "Credits"]) ? "" : _controller.Localizer["Translators", "Credits"]));
         dialog.SetReleaseNotes(_controller.AppInfo.Changelog);
-        dialog.Show();
+        dialog.Present();
     }
 }
